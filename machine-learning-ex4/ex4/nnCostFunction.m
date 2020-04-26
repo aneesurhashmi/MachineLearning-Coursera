@@ -85,14 +85,53 @@ for i = 1:length(y)
 	y_upd(i,:) = y_bin;
 end
 
+% Without Regularization
 J= 1/m * sum(sum(-y_upd.*log(h) - (1-y_upd).*log(1-h)),2);
 
+% -------------------- Regularization -------------------------- 
+
+Theta1_upd = Theta1(:,2:end);
+Theta2_upd = Theta2(:,2:end);
+
+J = J + lambda/(2*m) * (sum(sum(Theta1_upd.^2)) + sum(sum(Theta2_upd.^2)));
+
 % -------------------------------------------------------------
+% ------------------- Back Propagation ------------------------
+% -------------------------------------------------------------
+
+delta1 = zeros(size(Theta1));
+delta2 = zeros(size(Theta2));
+
+for i= 1:m
+	a1 = [1 X(i,:)];
+	z2 = (Theta1*a1')';
+	a2 = sigmoid(z2);
+	a2 = [ones(size(a2,1),1) a2];
+
+	%output layer
+	z3 = (Theta2*a2')';
+	a3 = sigmoid(z3);
+	%find error term: sigma
+	sigma3 = (a3 - y_upd(i,:))';
+
+	%for hidden layer
+	sigma2 = Theta2'(2:end,:) * sigma3 .* sigmoidGradient(z2)';
+	
+	% accumalte the gradient
+	delta1 = delta1 + sigma2 * a1;
+	delta2 = delta2 + sigma3 * a2;
+end
+
+% find gradient w.r.t each theta value
+% then regularize all values except bias theta value (where j = 0)
+Theta1_grad = delta1 ./m;
+Theta1_grad(:,2:end) =Theta1_grad(:,2:end) + (lambda/m) * Theta1(:,2:end);
+Theta2_grad = delta2 ./m;
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + (lambda/m) * Theta2(:,2:end);
 
 % =========================================================================
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
