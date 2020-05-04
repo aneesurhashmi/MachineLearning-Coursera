@@ -183,7 +183,7 @@ fprintf('\nTraining Neural Network... \n')
 
 %  After you have completed the assignment, change the MaxIter to a larger
 %  value to see how more training helps.
-options = optimset('MaxIter', 400);
+options = optimset('MaxIter', 1);
 
 %  You should also try different values of lambda
 lambda = 1;
@@ -197,6 +197,16 @@ costFunction = @(p) nnCostFunction(p, ...
 % Now, costFunction is a function that takes in only one argument (the
 % neural network parameters)
 [nn_params, cost] = fmincg(costFunction, initial_nn_params, options);
+
+% simplifying
+architecture = [input_layer_size ,hidden_layer_size, num_labels];
+
+alpha = 0.1;
+
+num_iters = 200;
+
+[nn_params_gd , cost_gd]= gradientDescentMulti(@nnCostFunction, nn_params, architecture, X, y, alpha, lambda, num_iters);
+
 
 % Obtain Theta1 and Theta2 back from nn_params
 Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
