@@ -1,6 +1,8 @@
-# MachineLearning
+# MachineLearningCoursera
 
 ## Coursera -- Stanford University -- Machine Learning Course
+
+## Instructor: Andrew Ng
 
 ## Machine Learning Algorithms: MATLAB
 
